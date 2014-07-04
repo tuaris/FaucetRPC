@@ -1,0 +1,5 @@
+*
+!.gitignore
+!.htaccess
+!sample-wallet.conf.php
+!sample-faucet.conf.php
