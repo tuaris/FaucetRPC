@@ -6,6 +6,7 @@
 * Returns an array of failed transactions
 */
 function faucetrpc_send_one_by_one(&$FAUCET_RPC, &$WALLET_RPC, $pendingTx){
+	$failedTx = [];
 	foreach($pendingTx as $tx){
 		echo "Sending Payment to {$tx['payout_address']} Amount: {$tx['payout_amount']}\n";
 		
@@ -48,6 +49,8 @@ function faucetrpc_send_all_at_once(&$FAUCET_RPC, &$WALLET_RPC, $pendingTx){
 	$groupedTx = array(); //for traking purposes
 	$groupTx = array(); //submitted to the 'sendmany' function
 	$totalPayment = 0; //Keep a running total
+
+	$failedTx = [];
 
 	// Group all payments
 	foreach($pendingTx as $tx){
