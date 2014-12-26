@@ -12,4 +12,5 @@ Minumim Payout/Transaction Grouping
 -----------------------------------
 
 Transaction grouping allows you send send all pending payments in a single transaction thus allowing you to reduce transaction fees. 
-When enabled, if the sum of pending payments is less than the threshold below payments will not be sent in the current run. Set FAUCET_MIN_PAYOUT to '0' to disable this feature and always use individual transactions.
+
+When enabled, if the sum of pending payments is less than 'FAUCET_MIN_PAYOUT', payments will not be sent in the current run. Set 'FAUCET_MIN_PAYOUT' to '0' to disable this feature and always use individual transactions.
