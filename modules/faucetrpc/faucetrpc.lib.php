@@ -66,7 +66,7 @@ function faucetrpc_send_all_at_once(&$FAUCET_RPC, &$WALLET_RPC, $pendingTx){
 
 		// Group the transactions
 		$groupedTx[] = $tx;
-		$groupTx[(string)$tx['payout_address']] = (float) $tx['payout_amount'];
+		@$groupTx[(string)$tx['payout_address']] += (float) $tx['payout_amount'];
 
 		// Add to total
 		$totalPayment = $totalPayment + (float) $tx['payout_amount'];
