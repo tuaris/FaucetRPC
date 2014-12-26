@@ -1,4 +1,5 @@
 <?php include('includes/bootstrap.inc.php'); ?>
+<?php include('modules/faucetrpc/faucetrpc.lib.php'); ?>
 <?php
 if(TEST_MODE){echo "!!!TEST MODE!!!\n";}
 
@@ -15,35 +16,14 @@ catch(Exception $e){
 	echo "No Pending Transacations\n";
 }
 
-//Send Payments
-foreach($pendingTx as $tx){
-	echo "Sending Payment to {$tx['payout_address']} Amount: {$tx['payout_amount']}\n";
-	
-	//Check address
-	$addressvalid = @$WALLET_RPC->validateaddress($tx['payout_address']);
-	if (!$addressvalid['isvalid']){
-		echo "Bad Address {$tx['payout_address']}\n";
-		$failedTx[] = $tx;
-		continue;
-	}
-
-	//Send Money
-	try{
-		if(TEST_MODE){
-			$txid = "a0123457890abcdefghijklmnopqrstuvwxyz100000TestTransaction0000001";
-		}
-		else{
-			$txid = @$WALLET_RPC->sendtoaddress((string)$tx['payout_address'], (float) $tx['payout_amount']);
-			$FAUCET_RPC->setPaidTx($tx['id'], $txid);
-			//Reduce Load on the server
-			sleep(SLEEP_TIME);
-		}
-	}
-	catch(Exception $e){
-		echo "Could not send Payment to {$tx['payout_address']}\n";
-		$failedTx[] = $tx;
-		continue;
-	}
+// If a minimum payout is set, use the group payment option
+if(FAUCET_MIN_PAYOUT > 0){
+	echo "Using group payment option\n";
+	$failedTx = faucetrpc_send_all_at_once($FAUCET_RPC, $WALLET_RPC, $pendingTx);
+}
+else{
+	echo "Using individual payment option\n";
+	$failedTx = faucetrpc_send_one_by_one($FAUCET_RPC, $WALLET_RPC, $pendingTx);
 }
 
 //Cleanup Failed Transactions
